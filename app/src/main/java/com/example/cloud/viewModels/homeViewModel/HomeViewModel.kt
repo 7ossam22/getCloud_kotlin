@@ -1,7 +1,7 @@
 package com.example.cloud.viewModels.homeViewModel
 
+import android.util.Log
 import android.widget.ImageView
-import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -26,23 +26,24 @@ class HomeViewModel : ViewModel() {
     val cloudList: LiveData<List<CloudData>> get() = _cloudList
     fun showData(imgView: ImageView) {
         uiScope.launch {
-            _cloudList.value = api.getAllData()
+//            _cloudList.value = api.getAllData()
             withContext(Dispatchers.IO) {
                 api.getUserData()
             }
             Glide
                 .with(imgView.context)
-                .load(api.getUserData().profilePic.toUri().buildUpon().scheme("https").build())
-                .centerCrop()
+                .load(api.getUserData().profilePic)
+                .circleCrop()
                 .placeholder(R.drawable.ic_person)
                 .into(imgView)
 
-            val capacity: Int = api.userData.usage.toInt()
-            val sizeKB = (capacity / 1024).toDouble()
+            val capacity = api.userData.usage.toDouble()
+            val sizeKB = (capacity / 1024)
             val sizeMB = sizeKB / 1024
             val sizeGB = sizeMB / 1024
             val sizeTB = sizeGB / 1024
-            _percentage.value = sizeKB / 5242880 * 100
+            _percentage.value = ((sizeKB/ 5242880) * 100)
+            Log.v("cap",_percentage.value.toString())
             when {
                 sizeTB >= 1 -> {
                     _usage.value = (sizeTB.toInt().toString() + "TB used /5GB")

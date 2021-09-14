@@ -1,6 +1,7 @@
 package com.example.cloud.adapter.homeAdapter
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,12 +29,14 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.MyViewHolder>() {
     override fun onBindViewHolder(holder:MyViewHolder, position: Int) {
         val cloudData = data[position]
         holder.apply {
+            Log.i("data",cloudData.name)
             name.text = cloudData.name
             size.text = cloudData.size
             date.text = cloudData.date
+            type.text = cloudData.type
             Glide.with(img.context)
                 .load(cloudData.link)
-                .centerCrop()
+                .circleCrop()
                 .placeholder(R.drawable.ic_person)
                 .into(img)
         }
@@ -46,9 +49,7 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.MyViewHolder>() {
         val size = itemView.findViewById<TextView>(R.id.item_size)!!
         val date = itemView.findViewById<TextView>(R.id.item_date)!!
         val img = itemView.findViewById<ImageView>(R.id.item_image)!!
+        val type = itemView.findViewById<TextView>(R.id.item_annotation)!!
     }
 
-
 }
-
-

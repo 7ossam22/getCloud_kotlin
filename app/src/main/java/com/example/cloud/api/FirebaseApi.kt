@@ -16,6 +16,7 @@ import com.google.firebase.firestore.ktx.toObjects
 open class FirebaseApi : ApiCalls {
     private val firebaseFirestore = FirebaseFirestore.getInstance()
     private val auth = Firebase.auth
+    private val reference = firebaseFirestore.collection("Users")
     lateinit var userData: UserData
 
     companion object {
@@ -30,7 +31,6 @@ open class FirebaseApi : ApiCalls {
         }
     }
 
-
     override suspend fun login(email: String, password: String): Boolean {
         return try {
             auth.signInWithEmailAndPassword(email, password).await()
@@ -44,8 +44,6 @@ open class FirebaseApi : ApiCalls {
         } catch (e: FirebaseApiNotAvailableException) {
             false
         }
-
-
     }
 
     override suspend fun register(username: String, email: String, password: String): Boolean {
@@ -57,22 +55,21 @@ open class FirebaseApi : ApiCalls {
         } catch (e: FirebaseAuthInvalidUserException) {
             false
         }
-
     }
 
     override suspend fun getAllData(): List<CloudData> {
         val response: List<CloudData>?
-        response = firebaseFirestore.collection("Users").document(auth.currentUser!!.uid).collection("Data").get().await().toObjects()
+        response = reference.document(auth.currentUser!!.uid).collection("Data").get().await().toObjects()
         return response
     }
+
     override suspend fun getUserData(): UserData {
-        val refrense = firebaseFirestore.collection("Users").document(auth.currentUser!!.uid)
         userData = UserData()
-        refrense.get().addOnCompleteListener {
-            userData.name = it.result!!.getString("Name").toString()
-            userData.email = it.result!!.getString("Email").toString()
-            userData.profilePic = it.result!!.getString("Profile_pic").toString()
-            userData.usage = it.result!!.getString("Usage").toString()
+        reference.document(auth.currentUser!!.uid).get().addOnCompleteListener {
+            userData.name = it.result!!.get("Name").toString()
+            userData.email = it.result!!.get("Email").toString()
+            userData.profilePic = it.result!!.get("Profile_Pic").toString()
+            userData.usage = it.result!!.get("Usage").toString()
         }.await()
         return this.userData
     }
