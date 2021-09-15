@@ -1,6 +1,5 @@
 package com.example.cloud.adapter.homeAdapter
 
-import android.annotation.SuppressLint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,11 +13,6 @@ import com.example.cloud.data.CloudData
 
 class HomeAdapter : RecyclerView.Adapter<HomeAdapter.MyViewHolder>() {
     var data = listOf<CloudData>()
-        @SuppressLint("NotifyDataSetChanged")
-        set(value) {
-            field = value
-            notifyDataSetChanged()
-        }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         return MyViewHolder(
@@ -33,7 +27,6 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.MyViewHolder>() {
             name.text = cloudData.name
             size.text = cloudData.size
             date.text = cloudData.date
-            type.text = cloudData.type
             Glide.with(img.context)
                 .load(cloudData.link)
                 .circleCrop()
@@ -49,7 +42,6 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.MyViewHolder>() {
         val size = itemView.findViewById<TextView>(R.id.item_size)!!
         val date = itemView.findViewById<TextView>(R.id.item_date)!!
         val img = itemView.findViewById<ImageView>(R.id.item_image)!!
-        val type = itemView.findViewById<TextView>(R.id.item_annotation)!!
     }
 
 }

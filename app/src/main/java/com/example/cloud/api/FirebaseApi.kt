@@ -12,12 +12,14 @@ import com.google.firebase.firestore.*
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
 import com.google.firebase.firestore.ktx.toObjects
+import com.google.firebase.firestore.ktx.toObject
 
 open class FirebaseApi : ApiCalls {
     private val firebaseFirestore = FirebaseFirestore.getInstance()
     private val auth = Firebase.auth
-    private val reference = firebaseFirestore.collection("Users")
+    private val reference = firebaseFirestore.collection("users")
     lateinit var userData: UserData
+    private lateinit var cloudData : List<CloudData>
 
     companion object {
 
@@ -58,20 +60,14 @@ open class FirebaseApi : ApiCalls {
     }
 
     override suspend fun getAllData(): List<CloudData> {
-        val response: List<CloudData>?
-        response = reference.document(auth.currentUser!!.uid).collection("Data").get().await().toObjects()
-        return response
+        cloudData = reference.document(auth.currentUser!!.uid).collection("data").get().await().toObjects()
+        return cloudData
     }
 
     override suspend fun getUserData(): UserData {
-        userData = UserData()
-        reference.document(auth.currentUser!!.uid).get().addOnCompleteListener {
-            userData.name = it.result!!.get("Name").toString()
-            userData.email = it.result!!.get("Email").toString()
-            userData.profilePic = it.result!!.get("Profile_Pic").toString()
-            userData.usage = it.result!!.get("Usage").toString()
-        }.await()
-        return this.userData
+        userData = reference.document(auth.currentUser!!.uid).get().await().toObject<UserData>()!!
+        return userData
+
     }
 
 }

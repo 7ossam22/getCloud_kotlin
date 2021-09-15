@@ -50,14 +50,14 @@
         android:layout_marginTop="7dp"
 
        />
-    <ImageView
-        android:id="@+id/item_more"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_more_vert_24"
-        android:layout_alignParentRight="true"
-        android:layout_marginLeft="15dp"
-        />
+
+        <ImageView
+            android:id="@+id/item_more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="15dp"
+            android:src="@drawable/ic_more_vert_24" />
         <TextView
             android:id="@+id/item_size"
             android:layout_width="wrap_content"

@@ -102,8 +102,8 @@
             android:layout_marginTop="30dp"
             android:layout_marginEnd="15dp"
             android:background="@drawable/recycler_style"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:padding="15dp" />
+            android:padding="15dp"
+            />
 
         <TextView
             android:id="@+id/item_annotation"

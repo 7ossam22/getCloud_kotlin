@@ -1,6 +1,5 @@
 package com.example.cloud.viewModels.homeViewModel
 
-import android.util.Log
 import android.widget.ImageView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,7 +9,6 @@ import com.example.cloud.R
 import com.example.cloud.api.FirebaseApi
 import com.example.cloud.data.CloudData
 import kotlinx.coroutines.*
-
 
 class HomeViewModel : ViewModel() {
     private val job = Job()
@@ -26,7 +24,7 @@ class HomeViewModel : ViewModel() {
     val cloudList: LiveData<List<CloudData>> get() = _cloudList
     fun showData(imgView: ImageView) {
         uiScope.launch {
-//            _cloudList.value = api.getAllData()
+            _cloudList.value = api.getAllData()
             withContext(Dispatchers.IO) {
                 api.getUserData()
             }
@@ -43,7 +41,6 @@ class HomeViewModel : ViewModel() {
             val sizeGB = sizeMB / 1024
             val sizeTB = sizeGB / 1024
             _percentage.value = ((sizeKB/ 5242880) * 100)
-            Log.v("cap",_percentage.value.toString())
             when {
                 sizeTB >= 1 -> {
                     _usage.value = (sizeTB.toInt().toString() + "TB used /5GB")
