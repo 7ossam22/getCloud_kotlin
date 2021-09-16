@@ -1,4 +1,4 @@
-package com.example.cloud.viewModels.loginViewModel
+package com.example.cloud.viewModels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -25,14 +25,8 @@ class LoginViewModel : ViewModel() {
     fun login(email: String, password: String) {
         _spinner.value = true
         uiScope.launch {
-            val boolean = api.login(email, password)
-            if (boolean) {
-                _spinner.value = false
-                _loginSuccess.value = true
-            } else {
-                _spinner.value = false
-                _loginSuccess.value = false
-            }
+            _loginSuccess.value = api.login(email, password)
+            _spinner.value = false
         }
     }
 

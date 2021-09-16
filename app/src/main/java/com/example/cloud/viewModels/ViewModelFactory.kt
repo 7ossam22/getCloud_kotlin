@@ -1,13 +1,10 @@
 package com.example.cloud.viewModels
 
+import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.cloud.ui.createAccount.CreateAccountFragment
-import com.example.cloud.viewModels.createAccountViewModel.CreateAccountViewModel
-import com.example.cloud.viewModels.homeViewModel.HomeViewModel
-import com.example.cloud.viewModels.loginViewModel.LoginViewModel
 
-class ViewModelFactory : ViewModelProvider.Factory {
+class ViewModelFactory(application: Application) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return when {
             modelClass.isAssignableFrom(LoginViewModel::class.java) -> LoginViewModel() as T

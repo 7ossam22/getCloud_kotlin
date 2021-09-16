@@ -21,6 +21,7 @@ open class FirebaseApi : ApiCalls {
     lateinit var userData: UserData
     private lateinit var cloudData : List<CloudData>
 
+    //Firebase singleton
     companion object {
 
         private var instanse: FirebaseApi? = null
@@ -46,11 +47,13 @@ open class FirebaseApi : ApiCalls {
         } catch (e: FirebaseApiNotAvailableException) {
             false
         }
+
     }
 
     override suspend fun register(username: String, email: String, password: String): Boolean {
         return try {
             auth.createUserWithEmailAndPassword(email, password).await()
+            onPushingUserData(username,email)
             true
         } catch (e: FirebaseAuthInvalidCredentialsException) {
             false
@@ -69,5 +72,13 @@ open class FirebaseApi : ApiCalls {
         return userData
 
     }
-
+    private suspend fun onPushingUserData(username: String, email: String)
+    {
+        val map = HashMap<String,String>()
+        map["name"] = username
+        map["email"] = email
+        map["profilePic"] = ""
+        map["usage"] = "0"
+        reference.document(auth.currentUser!!.uid).set(map).await()
+    }
 }

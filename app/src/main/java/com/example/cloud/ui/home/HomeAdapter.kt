@@ -1,4 +1,4 @@
-package com.example.cloud.adapter.homeAdapter
+package com.example.cloud.ui.home
 
 import android.util.Log
 import android.view.LayoutInflater
@@ -20,18 +20,14 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.MyViewHolder>() {
         )
     }
 
-    override fun onBindViewHolder(holder:MyViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val cloudData = data[position]
         holder.apply {
-            Log.i("data",cloudData.name)
+            Log.i("data", cloudData.name)
             name.text = cloudData.name
             size.text = cloudData.size
             date.text = cloudData.date
-            Glide.with(img.context)
-                .load(cloudData.link)
-                .circleCrop()
-                .placeholder(R.drawable.ic_person)
-                .into(img)
+            onFilteringData(img, cloudData.type, cloudData.link)
         }
     }
 
@@ -44,4 +40,28 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.MyViewHolder>() {
         val img = itemView.findViewById<ImageView>(R.id.item_image)!!
     }
 
+    //Displaying specific images for each data type after filtering it
+    private fun onFilteringData(img: ImageView, type: String, link: String) {
+        when {
+            type.startsWith("image") -> {
+                Glide.with(img.context)
+                    .load(link)
+                    .optionalCircleCrop()
+                    .placeholder(R.drawable.ic_baseline_cloud_24)
+                    .into(img)
+            }
+            type.endsWith("android.package-archive") -> {
+                img.setImageResource(R.drawable.ic_baseline_android_24)
+            }
+            type.endsWith("pdf") -> {
+                img.setImageResource(R.drawable.ic_baseline_picture_as_pdf_24)
+            }
+            type.startsWith("audio") -> {
+                img.setImageResource(R.drawable.ic_baseline_audiotrack_24)
+            }
+            else -> {
+                img.setImageResource(R.drawable.ic_baseline_insert_drive_file_24)
+            }
+        }
+    }
 }

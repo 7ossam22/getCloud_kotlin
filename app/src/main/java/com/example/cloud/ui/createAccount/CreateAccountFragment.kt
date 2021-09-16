@@ -12,7 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.cloud.R
 import com.example.cloud.databinding.FragmentCreateAccountBinding
 import com.example.cloud.viewModels.ViewModelFactory
-import com.example.cloud.viewModels.createAccountViewModel.CreateAccountViewModel
+import com.example.cloud.viewModels.CreateAccountViewModel
 
 class CreateAccountFragment : Fragment() {
 
@@ -22,9 +22,12 @@ class CreateAccountFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_create_account,container,false)
-        viewModelFactory = ViewModelFactory()
-        viewModel = ViewModelProvider(this,viewModelFactory).get(CreateAccountViewModel::class.java)
+        binding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_create_account, container, false)
+        val application = requireNotNull(this.activity).application!!
+        viewModelFactory = ViewModelFactory(application)
+        viewModel =
+            ViewModelProvider(this, viewModelFactory).get(CreateAccountViewModel::class.java)
         binding.lifecycleOwner = this
         binding.existAccount.setOnClickListener {
             findNavController().navigate(R.id.action_createAccountFragment_to_loginFragment)
@@ -34,35 +37,35 @@ class CreateAccountFragment : Fragment() {
                 Toast.makeText(context, "Fill your data", Toast.LENGTH_LONG).show()
             } else if (binding.username.text.isEmpty()) {
                 binding.username.requestFocus()
-            }
-              else if (binding.email.text.isEmpty()) {
+            } else if (binding.email.text.isEmpty()) {
                 binding.email.requestFocus()
             } else if (binding.password.text.isEmpty()) {
                 binding.password.requestFocus()
             } else {
-                viewModel.register(binding.username.text.toString().trim(), binding.email.text.toString().trim(), binding.password.text.toString().trim())
+                viewModel.register(
+                    binding.username.text.toString().trim(),
+                    binding.email.text.toString().trim(),
+                    binding.password.text.toString().trim()
+                )
             }
-            }
-
-        viewModel.registerSuccess.observe(viewLifecycleOwner,{
+        }
+        viewModel.registerSuccess.observe(viewLifecycleOwner, {
             if (it) {
                 Toast.makeText(context, "Account registration successful", Toast.LENGTH_LONG).show()
+                findNavController().navigate(R.id.action_createAccountFragment_to_homeFragment)
             } else {
                 Toast.makeText(context, "registration failed", Toast.LENGTH_LONG).show()
             }
         })
-
-        viewModel.spinner.observe(viewLifecycleOwner,{
+        viewModel.spinner.observe(viewLifecycleOwner, {
             if (it) {
                 binding.progressBar1.visibility = View.VISIBLE
                 binding.signup.visibility = View.INVISIBLE
-            }
-            else {
+            } else {
                 binding.progressBar1.visibility = View.INVISIBLE
                 binding.signup.visibility = View.VISIBLE
             }
         })
         return binding.root
     }
-
 }

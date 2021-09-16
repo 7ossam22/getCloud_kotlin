@@ -12,7 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.cloud.R
 import com.example.cloud.databinding.FragmentLoginBinding
 import com.example.cloud.viewModels.ViewModelFactory
-import com.example.cloud.viewModels.loginViewModel.LoginViewModel
+import com.example.cloud.viewModels.LoginViewModel
 
 
 class LoginFragment : Fragment() {
@@ -29,7 +29,8 @@ class LoginFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_login, container, false)
-        viewModelFactory = ViewModelFactory()
+        val application = requireNotNull(this.activity).application!!
+        viewModelFactory = ViewModelFactory(application)
         viewModel = ViewModelProvider(this, viewModelFactory).get(LoginViewModel::class.java)
         binding.lifecycleOwner = this
         binding.newaccount.setOnClickListener{
@@ -52,13 +53,12 @@ class LoginFragment : Fragment() {
             //Init your Observers
             viewModel.loginSuccess.observe(viewLifecycleOwner, {
                 if (it) {
-                    Toast.makeText(context, "Logged in", Toast.LENGTH_LONG).show()
                     findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                    Toast.makeText(context, "Logged in", Toast.LENGTH_LONG).show()
 
                 } else {
-                    Toast.makeText(context, "Login failed", Toast.LENGTH_LONG).show()
                     findNavController().popBackStack()
-//                    viewModel.navigateMeFailed()
+                    Toast.makeText(context, "Login failed", Toast.LENGTH_LONG).show()
                 }
             })
             viewModel.spinner.observe(viewLifecycleOwner, {

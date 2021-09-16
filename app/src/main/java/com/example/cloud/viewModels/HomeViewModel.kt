@@ -1,4 +1,4 @@
-package com.example.cloud.viewModels.homeViewModel
+package com.example.cloud.viewModels
 
 import android.widget.ImageView
 import androidx.lifecycle.LiveData
@@ -17,14 +17,26 @@ class HomeViewModel : ViewModel() {
     private val _usage = MutableLiveData<String>()
     private val _percentage = MutableLiveData<Double>()
     private val _cloudList = MutableLiveData<List<CloudData>>()
+    private val _listChecker = MutableLiveData<Boolean>()
+    private val _progressListener = MutableLiveData<Boolean>()
 
 
     val usage: LiveData<String> get() = _usage
     val percentage: LiveData<Double> get() = _percentage
     val cloudList: LiveData<List<CloudData>> get() = _cloudList
+    val listChecker: LiveData<Boolean> get() = _listChecker
+    val progressListener: LiveData<Boolean> get() = _progressListener
     fun showData(imgView: ImageView) {
         uiScope.launch {
+            _progressListener.value = true
             _cloudList.value = api.getAllData()
+            if (_cloudList.value.isNullOrEmpty()) {
+                _progressListener.value = false
+                _listChecker.value = true
+            }
+            else{
+                _progressListener.value = false
+            }
             withContext(Dispatchers.IO) {
                 api.getUserData()
             }
@@ -40,7 +52,7 @@ class HomeViewModel : ViewModel() {
             val sizeMB = sizeKB / 1024
             val sizeGB = sizeMB / 1024
             val sizeTB = sizeGB / 1024
-            _percentage.value = ((sizeKB/ 5242880) * 100)
+            _percentage.value = ((sizeKB / 5242880) * 100)
             when {
                 sizeTB >= 1 -> {
                     _usage.value = (sizeTB.toInt().toString() + "TB used /5GB")
