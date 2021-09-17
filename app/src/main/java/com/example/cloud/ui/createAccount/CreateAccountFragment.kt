@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.cloud.R
+import com.example.cloud.api.RegisterOperation
 import com.example.cloud.databinding.FragmentCreateAccountBinding
 import com.example.cloud.viewModels.ViewModelFactory
 import com.example.cloud.viewModels.CreateAccountViewModel
@@ -50,7 +51,7 @@ class CreateAccountFragment : Fragment() {
             }
         }
         viewModel.registerSuccess.observe(viewLifecycleOwner, {
-            if (it) {
+            if (it.equals(RegisterOperation.Ok)) {
                 Toast.makeText(context, "Account registration successful", Toast.LENGTH_LONG).show()
                 findNavController().navigate(R.id.action_createAccountFragment_to_homeFragment)
             } else {

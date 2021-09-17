@@ -1,6 +1,7 @@
 package com.example.cloud.ui.login
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.cloud.R
+import com.example.cloud.api.LoggingOperation
 import com.example.cloud.databinding.FragmentLoginBinding
 import com.example.cloud.viewModels.ViewModelFactory
 import com.example.cloud.viewModels.LoginViewModel
@@ -52,13 +54,14 @@ class LoginFragment : Fragment() {
 
             //Init your Observers
             viewModel.loginSuccess.observe(viewLifecycleOwner, {
-                if (it) {
-                    findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
-                    Toast.makeText(context, "Logged in", Toast.LENGTH_LONG).show()
-
-                } else {
-                    findNavController().popBackStack()
-                    Toast.makeText(context, "Login failed", Toast.LENGTH_LONG).show()
+                when {it.equals(LoggingOperation.Ok) -> { findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                        Toast.makeText(context, "Logged in", Toast.LENGTH_LONG).show()
+                    }it.equals(LoggingOperation.Failed) -> {
+                        findNavController().popBackStack()
+                        Toast.makeText(context, "Login failed", Toast.LENGTH_LONG).show()
+                    }else -> {
+                        Log.v("op",it.toString())
+                    }
                 }
             })
             viewModel.spinner.observe(viewLifecycleOwner, {
