@@ -35,6 +35,7 @@ class HomeViewModel : ViewModel() {
                 _listChecker.value = true
             } else {
                 _progressListener.value = false
+                _listChecker.value = false
             }
             withContext(Dispatchers.IO) {
                 api.getUserData()

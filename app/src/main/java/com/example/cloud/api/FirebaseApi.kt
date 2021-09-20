@@ -38,19 +38,19 @@ open class FirebaseApi : ApiCalls {
         }
     }
 
-    override suspend fun login(email: String, password: String): LoggingOperation {
-        LoggingOperation.OperationPrepared
+    override suspend fun login(email: String, password: String): LoginOperation {
+        LoginOperation.OnHold
         return try {
             auth.signInWithEmailAndPassword(email, password).await()
-            LoggingOperation.Ok
+            LoginOperation.Ok
         } catch (e: FirebaseAuthInvalidUserException) {
-            LoggingOperation.Failed
+            LoginOperation.Failed
         } catch (e: FirebaseAuthInvalidCredentialsException) {
-            LoggingOperation.Failed
+            LoginOperation.Failed
         } catch (e: FirebaseNetworkException) {
-            LoggingOperation.Failed
+            LoginOperation.Failed
         } catch (e: FirebaseApiNotAvailableException) {
-            LoggingOperation.Failed
+            LoginOperation.Failed
         }
 
     }
@@ -60,7 +60,7 @@ open class FirebaseApi : ApiCalls {
         email: String,
         password: String
     ): RegisterOperation {
-        RegisterOperation.OperationPrepared
+        RegisterOperation.OnHold
         return try {
             auth.createUserWithEmailAndPassword(email, password).await()
             onPushingUserData(username, email)
@@ -75,8 +75,7 @@ open class FirebaseApi : ApiCalls {
     }
 
     override suspend fun getAllData(): List<CloudData> {
-        cloudData =
-            db.document(auth.currentUser!!.uid).collection("data").get().await().toObjects()
+        cloudData = db.document(auth.currentUser!!.uid).collection("data").get().await().toObjects()
         return cloudData
     }
 
@@ -88,6 +87,11 @@ open class FirebaseApi : ApiCalls {
     override suspend fun deleteItem(item: CloudData) {
         storageRef.child("data/wASwNS1PWwY2UTmL50OszKLevzJ3").child(item.name).delete().await()
         db.document(auth.currentUser!!.uid).collection("data").document(item.id).delete().await()
+
+    }
+
+    override suspend fun uploadItem() {
+        TODO("Not yet implemented")
     }
 
     private suspend fun onPushingUserData(username: String, email: String) {

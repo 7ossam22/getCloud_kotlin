@@ -1,5 +1,6 @@
 package com.example.cloud.ui.home
 
+import android.annotation.SuppressLint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,8 @@ import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.cloud.R
@@ -17,8 +20,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class HomeAdapter : RecyclerView.Adapter<HomeAdapter.MyViewHolder>() {
-    var data = listOf<CloudData>()
+class HomeAdapter :ListAdapter<CloudData,HomeAdapter.MyViewHolder>(CloudDataDiffCallback()) {
     private val api = FirebaseApi.singleton()
     private val uiScope = CoroutineScope(Dispatchers.Main)
 
@@ -29,7 +31,7 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.MyViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        val cloudData = data[position]
+        val cloudData = getItem(position)
         holder.apply {
             Log.i("data", cloudData.name)
             name.text = cloudData.name
@@ -38,22 +40,24 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.MyViewHolder>() {
             size.text = onSizeCalculation(cloudData.size)
             onFilteringData(img, cloudData.type, cloudData.link)
             menu.setOnClickListener {
-                val popupMenu = PopupMenu(menu.context,menu)
+                val popupMenu = PopupMenu(menu.context, menu)
                 popupMenu.menuInflater.inflate(R.menu.item_menu, popupMenu.menu)
                 popupMenu.setOnMenuItemClickListener {
-                    when(it.itemId){
-                       R.id.downloadItem -> Toast.makeText(menu.context,"Download Clicked",Toast.LENGTH_LONG).show().equals(true)
-                        R.id.deleteItem -> onDeleteItem(position,cloudData.name).equals(true)
+                    when (it.itemId) {
+                        R.id.downloadItem -> Toast.makeText(
+                            menu.context,
+                            "Download Clicked",
+                            Toast.LENGTH_LONG
+                        ).show().equals(true)
+                        R.id.deleteItem -> onDeleteItem(cloudData).equals(true)
                         else
-                            -> false
+                        -> false
                     }
                 }
                 popupMenu.show()
             }
         }
     }
-
-    override fun getItemCount() = data.size
 
     class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val name = itemView.findViewById<TextView>(R.id.item_name)!!
@@ -106,10 +110,24 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.MyViewHolder>() {
 
 
     }
-    private fun onDeleteItem(position: Int,name:String)
-    {
-     uiScope.launch {
-         api.deleteItem(position,name)
-     }
+
+    private fun onDeleteItem(item: CloudData) {
+        uiScope.launch {
+            api.deleteItem(item)
+        }
+    }
+
+
+
+    class CloudDataDiffCallback : DiffUtil.ItemCallback<CloudData>(){
+        override fun areItemsTheSame(oldItem: CloudData, newItem: CloudData): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        @SuppressLint("DiffUtilEquals")
+        override fun areContentsTheSame(oldItem: CloudData, newItem: CloudData): Boolean {
+            return oldItem == newItem
+        }
+
     }
 }

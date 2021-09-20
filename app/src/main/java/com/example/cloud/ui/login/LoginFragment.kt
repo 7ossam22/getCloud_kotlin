@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.cloud.R
-import com.example.cloud.api.LoggingOperation
+import com.example.cloud.api.LoginOperation
 import com.example.cloud.databinding.FragmentLoginBinding
 import com.example.cloud.viewModels.LoginViewModel
 import com.example.cloud.viewModels.ViewModelFactory
@@ -56,11 +56,11 @@ class LoginFragment : Fragment() {
         //Init your Observers
         viewModel.loginSuccess.observe(viewLifecycleOwner, {
             when {
-                it.equals(LoggingOperation.Ok) -> {
+                it.equals(LoginOperation.Ok) -> {
                     findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
                     Toast.makeText(context, "Logged in", Toast.LENGTH_LONG).show()
                 }
-                it.equals(LoggingOperation.Failed) -> {
+                it.equals(LoginOperation.Failed) -> {
                     Toast.makeText(context, "Login failed", Toast.LENGTH_LONG).show()
                 }
                 else -> {

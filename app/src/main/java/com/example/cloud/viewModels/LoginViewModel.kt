@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.cloud.api.FirebaseApi
-import com.example.cloud.api.LoggingOperation
+import com.example.cloud.api.LoginOperation
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -17,13 +17,13 @@ class LoginViewModel : ViewModel() {
     private val api = FirebaseApi.singleton()
 
     private val _spinner = MutableLiveData<Boolean>()
-    private val _loginSuccess = MutableLiveData<LoggingOperation>()
+    private val _loginSuccess = MutableLiveData<LoginOperation>()
 
     val spinner: LiveData<Boolean> get() = _spinner
-    val loginSuccess: LiveData<LoggingOperation> get() = _loginSuccess
+    val loginSuccess: LiveData<LoginOperation> get() = _loginSuccess
 
     fun login(email: String, password: String) {
-        _loginSuccess.value = LoggingOperation.OperationPrepared
+        _loginSuccess.value = LoginOperation.OnHold
         _spinner.value = true
         uiScope.launch {
             _loginSuccess.value = api.login(email, password)

@@ -55,8 +55,7 @@ class HomeFragment : Fragment() {
         }
         //ViewModel observers
         viewModel.cloudList.observe(viewLifecycleOwner, {
-            adapter.data = it
-            adapter.notifyDataSetChanged()
+            adapter.submitList(it)
         })
         viewModel.progressListener.observe(viewLifecycleOwner, {
             when {
@@ -76,6 +75,5 @@ class HomeFragment : Fragment() {
         //Fragment root
         return binding.root
     }
-
 
 }
