@@ -10,4 +10,5 @@ interface ApiCalls {
     suspend fun register(username:String,email:String,password:String):RegisterOperation
     suspend fun getAllData(): List<CloudData>
     suspend fun getUserData() : UserData
+    suspend fun deleteItem(id: Int,name:String)
 }

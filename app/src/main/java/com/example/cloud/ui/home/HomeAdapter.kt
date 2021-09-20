@@ -5,14 +5,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.cloud.R
+import com.example.cloud.api.FirebaseApi
 import com.example.cloud.data.CloudData
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class HomeAdapter : RecyclerView.Adapter<HomeAdapter.MyViewHolder>() {
     var data = listOf<CloudData>()
+    private val api = FirebaseApi.singleton()
+    private val uiScope = CoroutineScope(Dispatchers.Main)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         return MyViewHolder(
@@ -27,7 +35,21 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.MyViewHolder>() {
             name.text = cloudData.name
             size.text = cloudData.size
             date.text = cloudData.date
+            size.text = onSizeCalculation(cloudData.size)
             onFilteringData(img, cloudData.type, cloudData.link)
+            menu.setOnClickListener {
+                val popupMenu = PopupMenu(menu.context,menu)
+                popupMenu.menuInflater.inflate(R.menu.item_menu, popupMenu.menu)
+                popupMenu.setOnMenuItemClickListener {
+                    when(it.itemId){
+                       R.id.downloadItem -> Toast.makeText(menu.context,"Download Clicked",Toast.LENGTH_LONG).show().equals(true)
+                        R.id.deleteItem -> onDeleteItem(position,cloudData.name).equals(true)
+                        else
+                            -> false
+                    }
+                }
+                popupMenu.show()
+            }
         }
     }
 
@@ -38,10 +60,12 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.MyViewHolder>() {
         val size = itemView.findViewById<TextView>(R.id.item_size)!!
         val date = itemView.findViewById<TextView>(R.id.item_date)!!
         val img = itemView.findViewById<ImageView>(R.id.item_image)!!
+        val menu = itemView.findViewById<ImageView>(R.id.item_menu)!!
     }
 
     //Displaying specific images for each data type after filtering it
     private fun onFilteringData(img: ImageView, type: String, link: String) {
+        //Image filtering
         when {
             type.startsWith("image") -> {
                 Glide.with(img.context)
@@ -63,5 +87,29 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.MyViewHolder>() {
                 img.setImageResource(R.drawable.ic_baseline_insert_drive_file_24)
             }
         }
+
+    }
+
+    private fun onSizeCalculation(size: String): String {
+        //Size filtering
+        val sizeKB = (size.toDouble() / 1024)
+        val sizeMB = sizeKB / 1024
+        val sizeGB = sizeMB / 1024
+        val sizeTB = sizeGB / 1024
+        return when {
+            sizeTB >= 1 -> sizeTB.toInt().toString() + "TB"
+            sizeGB >= 1 -> sizeGB.toInt().toString() + "GB"
+            sizeMB >= 1 -> sizeMB.toInt().toString() + "MB"
+            sizeKB >= 1 -> sizeKB.toInt().toString() + "KB"
+            else -> size + "Bytes"
+        }
+
+
+    }
+    private fun onDeleteItem(position: Int,name:String)
+    {
+     uiScope.launch {
+         api.deleteItem(position,name)
+     }
     }
 }

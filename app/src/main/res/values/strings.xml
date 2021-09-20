@@ -6,4 +6,12 @@
     <string name="get_cloud">Get Cloud</string>
     <string name="user_image">user image</string>
     <string name="menu_handeling">menu handeling</string>
+    <string name="profile">Profile</string>
+    <string name="about">About!</string>
+    <string name="logout">Logout</string>
+    <string name="change_profile_picture">Change Profile Picture</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="settings">Settings</string>
+    <string name="download">Download</string>
+    <string name="delete">Delete</string>
 </resources>

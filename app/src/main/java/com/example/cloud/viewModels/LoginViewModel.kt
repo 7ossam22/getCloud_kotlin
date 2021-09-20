@@ -26,16 +26,13 @@ class LoginViewModel : ViewModel() {
         _loginSuccess.value = LoggingOperation.OperationPrepared
         _spinner.value = true
         uiScope.launch {
-             _loginSuccess.value = api.login(email, password)
-
+            _loginSuccess.value = api.login(email, password)
             _spinner.value = false
         }
     }
 
-
     override fun onCleared() {
         super.onCleared()
         job.cancel()
-
     }
 }

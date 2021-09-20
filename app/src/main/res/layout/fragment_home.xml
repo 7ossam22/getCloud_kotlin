@@ -87,7 +87,7 @@
                 android:layout_height="11dp"
                 android:layout_below="@id/size_used"
                 android:layout_marginTop="10dp"
-                android:progress="@{viewModel.percentage.BYTES}"
+                android:progress="@{viewModel.percentage}"
                 android:progressDrawable="@drawable/progress_style"
                 android:progressTint="@color/upper" />
         </RelativeLayout>
