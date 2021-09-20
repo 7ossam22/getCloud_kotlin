@@ -69,10 +69,8 @@ open class FirebaseApi : ApiCalls {
             RegisterOperation.WeakPassword
         } catch (e: FirebaseAuthInvalidCredentialsException) {
             RegisterOperation.InvalidEmail
-
         } catch (e: FirebaseAuthUserCollisionException) {
             RegisterOperation.EmailExists
-
         }
     }
 
@@ -85,20 +83,22 @@ open class FirebaseApi : ApiCalls {
     override suspend fun getUserData(): UserData {
         userData = db.document(auth.currentUser!!.uid).get().await().toObject<UserData>()!!
         return userData
-
     }
 
-    override suspend fun deleteItem(id: Int,name:String) {
-        storageRef.child("data/wASwNS1PWwY2UTmL50OszKLevzJ3").child(name).delete().await()
-        db.document(auth.currentUser!!.uid).collection("data").document().delete().await()
+    override suspend fun deleteItem(item: CloudData) {
+        storageRef.child("data/wASwNS1PWwY2UTmL50OszKLevzJ3").child(item.name).delete().await()
+        db.document(auth.currentUser!!.uid).collection("data").document(item.id).delete().await()
     }
 
     private suspend fun onPushingUserData(username: String, email: String) {
-        val map = HashMap<String, String>()
-        map["name"] = username
-        map["email"] = email
-        map["profilePic"] = ""
-        map["usage"] = "0"
+        val map = mapOf(
+            pairs = arrayOf(
+                Pair("name", username),
+                Pair("email", email),
+                Pair("profilePic", ""),
+                Pair("usage", "0")
+            )
+        )
         db.document(auth.currentUser!!.uid).set(map).await()
     }
 }
