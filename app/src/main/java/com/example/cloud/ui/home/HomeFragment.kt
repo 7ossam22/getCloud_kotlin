@@ -16,25 +16,30 @@ import com.example.cloud.viewModels.ViewModelFactory
 import com.example.cloud.viewModels.homeViewModel.HomeViewModel
 
 class HomeFragment : Fragment() {
-    private lateinit var binding:FragmentHomeBinding
+    private lateinit var binding: FragmentHomeBinding
     private lateinit var viewModel: HomeViewModel
     private lateinit var viewModelFactory: ViewModelFactory
+
     @SuppressLint("NotifyDataSetChanged")
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         // Inflate the layout for this fragment
         viewModelFactory = ViewModelFactory()
-        viewModel = ViewModelProvider(this,viewModelFactory).get(HomeViewModel::class.java)
-        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_home,container,false)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(HomeViewModel::class.java)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
-        val manager = GridLayoutManager(activity,2)
+        val manager = GridLayoutManager(activity, 2)
         val adapter = HomeAdapter()
         binding.recyclerView1.layoutManager = manager
         binding.recyclerView1.adapter = adapter
-        viewModel.cloudList.observe(viewLifecycleOwner,{
-            adapter.data = it
+        viewModel.cloudList.observe(viewLifecycleOwner) {
+            adapter.submitList(it)
             adapter.notifyDataSetChanged()
-        })
+        }
         viewModel.showData(binding.userimg)
         return binding.root
     }

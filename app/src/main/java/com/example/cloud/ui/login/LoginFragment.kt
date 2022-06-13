@@ -32,7 +32,7 @@ class LoginFragment : Fragment() {
         viewModelFactory = ViewModelFactory()
         viewModel = ViewModelProvider(this, viewModelFactory).get(LoginViewModel::class.java)
         binding.lifecycleOwner = this
-        binding.newaccount.setOnClickListener{
+        binding.newAccount.setOnClickListener {
             findNavController().navigate(R.id.action_loginFragment_to_createAccountFragment)
         }
         binding.signin.setOnClickListener {
@@ -50,7 +50,7 @@ class LoginFragment : Fragment() {
             }
 
             //Init your Observers
-            viewModel.loginSuccess.observe(viewLifecycleOwner, {
+            viewModel.loginSuccess.observe(viewLifecycleOwner) {
                 if (it) {
                     Toast.makeText(context, "Logged in", Toast.LENGTH_LONG).show()
                     findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
@@ -60,17 +60,16 @@ class LoginFragment : Fragment() {
                     findNavController().popBackStack()
 //                    viewModel.navigateMeFailed()
                 }
-            })
-            viewModel.spinner.observe(viewLifecycleOwner, {
+            }
+            viewModel.spinner.observe(viewLifecycleOwner) {
                 if (it) {
                     binding.progressBar2.visibility = View.VISIBLE
                     binding.signin.visibility = View.INVISIBLE
-                }
-                else {
+                } else {
                     binding.progressBar2.visibility = View.INVISIBLE
                     binding.signin.visibility = View.VISIBLE
                 }
-            })
+            }
 
         }
 

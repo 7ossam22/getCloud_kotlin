@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.bumptech.glide.Glide
 import com.example.cloud.R
 import com.example.cloud.api.FirebaseApi
-import com.example.cloud.data.CloudData
+import com.example.cloud.model.CloudData
 import kotlinx.coroutines.*
 
 class HomeViewModel : ViewModel() {
@@ -40,7 +40,7 @@ class HomeViewModel : ViewModel() {
             val sizeMB = sizeKB / 1024
             val sizeGB = sizeMB / 1024
             val sizeTB = sizeGB / 1024
-            _percentage.value = ((sizeKB/ 5242880) * 100)
+            _percentage.value = ((sizeKB / 5242880) * 100)
             when {
                 sizeTB >= 1 -> {
                     _usage.value = (sizeTB.toInt().toString() + "TB used /5GB")
