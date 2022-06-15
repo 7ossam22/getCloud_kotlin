@@ -17,11 +17,13 @@ class HomeViewModel : ViewModel() {
     private val _usage = MutableLiveData<String>()
     private val _percentage = MutableLiveData<Double>()
     private val _cloudList = MutableLiveData<List<CloudData>>()
+    private val _showMenu = MutableLiveData<Boolean>(false)
 
 
     val usage: LiveData<String> get() = _usage
     val percentage: LiveData<Double> get() = _percentage
     val cloudList: LiveData<List<CloudData>> get() = _cloudList
+    val showMenu: LiveData<Boolean> get() = _showMenu
     fun showData(imgView: ImageView) {
         uiScope.launch {
             _cloudList.value = api.getAllData()
@@ -64,5 +66,9 @@ class HomeViewModel : ViewModel() {
     override fun onCleared() {
         super.onCleared()
         job.cancel()
+    }
+
+    fun showPopUpMenu() {
+        _showMenu.value = true
     }
 }
